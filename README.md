@@ -1,5 +1,9 @@
 # Veil
 
+<p align="center">
+  <img src="veil-logo.png" width="200" alt="Veil Logo" />
+</p>
+
 High-performance, glassmorphic terminal overlay for Windows. Engineered for low-latency command-line workflows with a "Scientific UI" philosophy.
 
 ## Technical Foundation
