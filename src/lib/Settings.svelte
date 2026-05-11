@@ -87,7 +87,12 @@
       class="settings-card" 
       style="transform: translate({pos.x}px, {pos.y}px)"
     >
-      <div class="settings-header" onmousedown={handleMouseDown}>
+      <div 
+        class="settings-header" 
+        onmousedown={handleMouseDown}
+        role="button"
+        tabindex="0"
+      >
         <div class="flex items-center gap-2">
           <Maximize2 size={16} />
           <span class="text-sm font-semibold">Settings</span>
@@ -245,48 +250,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999; /* Ensure it's above everything */
-    backdrop-filter: blur(8px);
-    animation: fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    -webkit-app-region: no-drag; /* Stop window dragging while menu is open */
+    z-index: 999;
+    backdrop-filter: blur(var(--glass-blur));
+    animation: fade-in var(--transition-smooth);
+    -webkit-app-region: no-drag;
   }
 
   .settings-card {
     position: relative;
-    background: rgba(20, 20, 20, 0.85);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-secondary);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    
-    /* Equation-based sizing */
     width: clamp(300px, 90vw, 340px);
     max-height: clamp(200px, 80vh, 600px);
-    
     pointer-events: auto;
-    box-shadow: 
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 20px 40px rgba(0, 0, 0, 0.4),
-      0 10px 20px rgba(0, 0, 0, 0.2);
-    animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--shadow-lg);
+    animation: slide-up var(--transition-smooth);
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
 
-  @keyframes slide-up {
-    from { opacity: 0; transform: translateY(10px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
   .settings-header {
     padding: 14px 18px;
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--surface-highlight);
+    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -299,10 +288,10 @@
   }
 
   .settings-body {
-    padding: 16px;
+    padding: var(--gap-lg);
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--gap-lg);
     flex: 1;
     overflow-y: auto;
     scrollbar-gutter: stable;
@@ -314,47 +303,14 @@
 
   .settings-body::-webkit-scrollbar-thumb {
     background: var(--border);
-    border-radius: 2px;
-  }
-
-  .stepper {
-    display: flex;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-  }
-
-  .stepper button {
-    padding: 6px 8px;
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .stepper button:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--text-primary);
-  }
-
-  .stepper-value {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    padding: 0 8px;
-    min-width: 40px;
-    text-align: center;
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
+    border-radius: 10px;
   }
 
   .setting-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    gap: var(--gap-md);
   }
 
   .setting-info {
@@ -373,19 +329,48 @@
     color: var(--text-secondary);
   }
 
-  .recorder-btn {
-    background: rgba(255, 255, 255, 0.05);
+  .stepper {
+    display: flex;
+    align-items: center;
+    background: var(--surface-highlight);
     border: 1px solid var(--border);
-    padding: 6px 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    min-width: 100px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
   }
 
-  .recorder-btn.recording {
-    border-color: #fff;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+  .stepper button {
+    padding: 6px 8px;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stepper button:hover {
+    background: var(--surface-highlight);
+    color: var(--text-primary);
+  }
+
+  .stepper-value {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 0 8px;
+    min-width: 40px;
+    text-align: center;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  .label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .description {
+    font-size: 11px;
+    color: var(--text-secondary);
   }
 
   .flex { display: flex; }
@@ -394,55 +379,39 @@
   .text-sm { font-size: 14px; }
   .font-semibold { font-weight: 600; }
 
-  input[type="range"] {
-    width: 100px;
-    accent-color: var(--accent);
-  }
-
+  input[type="range"],
   input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
     accent-color: var(--accent);
-  }
-
-  select {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    padding: 4px 8px;
-    font-size: 12px;
-    outline: none;
     cursor: pointer;
   }
 
-  select:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  option {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-  }
-
-  .number-input, .text-input {
-    background: rgba(255, 255, 255, 0.05);
+  select, .text-input {
+    background: var(--surface-highlight);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     color: var(--text-primary);
     padding: 4px 8px;
     font-size: 12px;
     outline: none;
-    width: 100px;
+    transition: all var(--transition-fast);
+  }
+
+  select:hover, .text-input:hover {
+    background: var(--border);
+  }
+
+  .text-input:focus {
+    border-color: var(--accent);
+    background: var(--surface-highlight);
   }
 
   .text-input {
     width: 140px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
   }
 
-  .number-input:focus, .text-input:focus {
-    border-color: var(--accent);
-    background: rgba(255, 255, 255, 0.1);
+  option {
+    background: var(--bg-primary);
+    color: var(--text-primary);
   }
 </style>

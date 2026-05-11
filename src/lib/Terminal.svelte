@@ -115,7 +115,7 @@
     background: transparent;
     box-sizing: border-box;
     transform: translateZ(0);
-    padding: 12px;
+    padding: var(--gap-md);
   }
 
   .terminal-viewport {
@@ -130,7 +130,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
   }
 
   :global(.xterm) {
@@ -140,12 +140,13 @@
   :global(.xterm-viewport) {
     background: transparent !important;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    scrollbar-color: var(--border) transparent;
   }
 
   :global(.xterm-rows) {
     font-size: clamp(14px, 1.2vw, 18px) !important;
     line-height: 1.5 !important;
+    font-family: var(--font-mono) !important;
   }
 
   /* Custom Modern Scrollbar */
@@ -153,11 +154,11 @@
     width: 4px;
   }
   :global(.xterm-viewport::-webkit-scrollbar-thumb) {
-    background: rgba(255, 255, 255, 0.12);
+    background: var(--border);
     border-radius: 10px;
-    transition: background 0.3s;
+    transition: background var(--transition-fast);
   }
   :global(.xterm-viewport::-webkit-scrollbar-thumb:hover) {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--border-bright);
   }
 </style>
