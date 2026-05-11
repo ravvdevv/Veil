@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { invoke } from '@tauri-apps/api/core';
-  import { X, Keyboard, Sun, Moon, Maximize2, Plus, Minus } from 'lucide-svelte';
+  import { X, Maximize2, Plus, Minus, RefreshCw } from 'lucide-svelte';
 
   let { show = $bindable(false), config, onSave } = $props();
 
@@ -54,8 +54,9 @@
   }
 
   // Dragging logic
+  let cardElement: HTMLElement | null = $state(null);
   let pos = $state({ x: 0, y: 0 });
-  let dragging = $state(false);
+  let dragging = false;
   let startPos = { x: 0, y: 0 };
 
   function handleMouseDown(e: MouseEvent) {
@@ -69,9 +70,18 @@
   }
 
   function handleMouseMove(e: MouseEvent) {
-    if (!dragging) return;
-    pos.x = e.clientX - startPos.x;
-    pos.y = e.clientY - startPos.y;
+    if (!dragging || !cardElement) return;
+    
+    let newX = e.clientX - startPos.x;
+    let newY = e.clientY - startPos.y;
+
+    // Scientific Clamping Logic
+    const rect = cardElement.getBoundingClientRect();
+    const halfWidth = (window.innerWidth - rect.width) / 2;
+    const halfHeight = (window.innerHeight - rect.height) / 2;
+
+    pos.x = Math.max(-halfWidth, Math.min(halfWidth, newX));
+    pos.y = Math.max(-halfHeight, Math.min(halfHeight, newY));
   }
 
   function handleMouseUp() {
@@ -84,6 +94,7 @@
 {#if show && config}
   <div class="settings-overlay">
     <div 
+      bind:this={cardElement}
       class="settings-card" 
       style="transform: translate({pos.x}px, {pos.y}px)"
     >
@@ -238,6 +249,16 @@
           />
         </div>
       </div>
+
+      <div class="settings-footer">
+        <button 
+          class="restart-btn" 
+          onclick={() => invoke('restart_app')}
+        >
+          <RefreshCw size={14} />
+          <span>Restart to Apply Changes</span>
+        </button>
+      </div>
     </div>
   </div>
 {/if}
@@ -306,6 +327,13 @@
     border-radius: 10px;
   }
 
+  .settings-footer {
+    padding: var(--gap-md) var(--gap-lg);
+    background: var(--surface-highlight);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(var(--glass-blur));
+  }
+
   .setting-item {
     display: flex;
     justify-content: space-between;
@@ -313,15 +341,10 @@
     gap: var(--gap-md);
   }
 
-  .setting-info {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-
   .label {
     font-size: 13px;
     font-weight: 500;
+    color: var(--text-primary);
   }
 
   .description {
@@ -342,9 +365,6 @@
     padding: 6px 8px;
     color: var(--text-secondary);
     transition: all var(--transition-fast);
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .stepper button:hover {
@@ -362,30 +382,11 @@
     border-right: 1px solid var(--border);
   }
 
-  .label {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-primary);
-  }
-
-  .description {
-    font-size: 11px;
-    color: var(--text-secondary);
-  }
-
-  .flex { display: flex; }
-  .items-center { align-items: center; }
-  .gap-2 { gap: 8px; }
-  .text-sm { font-size: 14px; }
-  .font-semibold { font-weight: 600; }
-
   input[type="range"],
-  input[type="checkbox"] {
+  input[type="checkbox"],
+  select,
+  .text-input {
     accent-color: var(--accent);
-    cursor: pointer;
-  }
-
-  select, .text-input {
     background: var(--surface-highlight);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -396,22 +397,31 @@
     transition: all var(--transition-fast);
   }
 
-  select:hover, .text-input:hover {
-    background: var(--border);
-  }
-
-  .text-input:focus {
-    border-color: var(--accent);
-    background: var(--surface-highlight);
-  }
-
   .text-input {
     width: 140px;
     font-family: var(--font-mono);
   }
 
-  option {
-    background: var(--bg-primary);
-    color: var(--text-primary);
+  .restart-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+    box-shadow: 0 4px 12px var(--accent-glow);
+  }
+
+  .restart-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
   }
 </style>

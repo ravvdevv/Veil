@@ -8,6 +8,11 @@ mod hotkeys;
 use tauri::Manager;
 
 #[tauri::command]
+fn restart_app(app_handle: tauri::AppHandle) {
+    app_handle.restart();
+}
+
+#[tauri::command]
 async fn snap_window(window: tauri::Window, side: String) {
     let monitor = match window.current_monitor() {
         Ok(Some(m)) => m,
@@ -163,6 +168,7 @@ fn main() {
             resize_window,
             resize_window_to_scale,
             snap_window,
+            restart_app,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
